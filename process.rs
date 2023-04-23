@@ -9,9 +9,10 @@ pub enum State {
 }
 
 use crate::{arch, consts, syscall};
-use alloc::collections::vec_deque::VecDeque;
+use alloc::{collections::vec_deque::VecDeque, vec::Vec};
 use core::{fmt, ptr::null_mut};
-
+use riscv::register::mcycle;
+use lazy_static::lazy_static;
 static mut NEXT_PID: usize = 1;
 
 #[derive(Debug, Clone)]
@@ -41,10 +42,13 @@ pub struct Process {
 }
 
 pub static mut PROCESS_LIST: Option<VecDeque<Process>> = None;
-pub static mut TMR_VALUES_LIST: Option<VecDeque<Option<VecDeque<i32>>>> = None;
-pub static mut total: Option<VecDeque<i32>> = None;
+pub static mut TMR_VALUES_LIST: Option<VecDeque<Option<VecDeque<usize>>>> = None;
+pub static mut time_total:f32 = 0.0;
+pub static mut total: Option<VecDeque<usize>> = None;
 pub static mut count:u32 = 0;
 pub static mut TMR_BOOL:bool = false;
+
+
 
 impl fmt::Display for Process {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -154,7 +158,9 @@ pub fn create_process(func: fn(), tmr: bool) -> usize {
 
     } else {
     
+    
     let mut processes: Option<VecDeque<Process>> = None;
+
 
         unsafe {
             TMR_BOOL = true;
@@ -233,37 +239,38 @@ pub fn init_tmr_values_list() {
     }
 }
 
+
+
 pub fn init() -> usize {
     unsafe {
+        let start_time = mcycle::read();
+
         PROCESS_LIST = Some(VecDeque::with_capacity(15));
 
         init_tmr_values_list();
-        
+
         create_process(sum, true);
 
         let pl = PROCESS_LIST.take().unwrap();
         let p = pl.front().unwrap().frame;
 
         PROCESS_LIST.replace(pl);
+
+        let end_time = mcycle::read();
+        let (execution_time, _) = end_time.overflowing_sub(start_time);
+
+        const CLOCK_FREQUENCY: f32 = 100_000_000.0; // 100 MHz
+        let execution_time_sec = (execution_time as f32) / CLOCK_FREQUENCY;
+
+        time_total = execution_time_sec;
+
         (*p).pc
     }
+
 }
 
 fn sum() {
-    unsafe {
-        if let Some(mut sum_vec) = total.take(){
-            sum_vec.push_back(1);
-            total.replace(sum_vec);
-        }
-        
-         if(TMR_BOOL) {
-           syscall::syscall_push_tmr(total.clone());
-         } else {
-
-         syscall::syscall_print_total(total.clone()); 
-         }
-
-        }
+    syscall::syscall_sum();
 }
 
 
