@@ -139,16 +139,21 @@ pub unsafe fn make_syscall(pc: usize, frame_ptr: *mut crate::arch::isa::trap::Tr
                                      x = queue[k];
                                      y = line[k];
                                     if(x == y) {
-                                         crate::println!("x == y" );
+                                         crate::println!("x is {} ", x);
+                                         crate::println!("y is {} ", y);
                                         count_queue +=1;
+                                        crate::println!("count_queue is {} ", count_queue);
                                     } else {
-                                        crate::println!("x is {}", x);
-                                        crate::println!("y is {}", y);
+                                        crate::println!("x is {} ", x);
+                                        crate::println!("y is {} ", y);
                                     }
                                 }
                             }
                             if(count_queue == queue.len()){
+                                crate::println!("equal vector");
                                 count += 1;
+                            } else {
+                                crate::println!("error");
                             }
                         }
                     }
