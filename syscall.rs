@@ -163,6 +163,7 @@ pub unsafe fn make_syscall(pc: usize, frame_ptr: *mut crate::arch::isa::trap::Tr
                     }
                 }
                 crate::println!("Most common value: {:?}", most_common_value);
+                crate::println!("Execution time: {:?}", process::time_total);
             }
         
                
