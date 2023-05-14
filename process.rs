@@ -240,7 +240,7 @@ pub fn init() -> usize {
 
         init_tmr_values_list();
 
-        create_process(sum, true);
+        create_process(sum, false);
 
         let pl = PROCESS_LIST.take().unwrap();
         let p = pl.front().unwrap().frame;
@@ -253,7 +253,7 @@ pub fn init() -> usize {
         const CLOCK_FREQUENCY: f32 = 100_000_000.0; // 100 MHz
         let execution_time_sec = (execution_time as f32) / CLOCK_FREQUENCY;
 
-        time_total = execution_time_sec;
+        time_total = execution_time_sec * 1000.0;
 
         (*p).pc
     }
