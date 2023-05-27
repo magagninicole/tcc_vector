@@ -240,7 +240,7 @@ pub fn init() -> usize {
 
         init_tmr_values_list();
 
-        create_process(sum, false);
+        create_process(sum, true);
 
         let pl = PROCESS_LIST.take().unwrap();
         let p = pl.front().unwrap().frame;
