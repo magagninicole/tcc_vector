@@ -76,6 +76,7 @@ pub unsafe fn make_syscall(pc: usize, frame_ptr: *mut crate::arch::isa::trap::Tr
         }
         Ok(Syscall::PrintTotal) => {
             crate::println!("Total: {:?}", process::total);
+            crate::println!("Execution time: {:?}", process::time_total);
         }
         Ok(Syscall::Print) => {
             crate::println!("Execution time: {:?}", process::time_total);
@@ -89,10 +90,25 @@ pub unsafe fn make_syscall(pc: usize, frame_ptr: *mut crate::arch::isa::trap::Tr
             x.push_back(1);
             x.push_back(2);
             x.push_back(3);
-        
+            x.push_back(1);
+            x.push_back(2);
+            x.push_back(3);
+            x.push_back(1);
+            x.push_back(2);
+            x.push_back(3);
+            x.push_back(1);
+            
             y.push_back(1);
             y.push_back(2);
             y.push_back(3);
+            y.push_back(1);
+            y.push_back(2);
+            y.push_back(3);
+            y.push_back(1);
+            y.push_back(2);
+            y.push_back(3);
+            y.push_back(1);
+            
         
             if let Some(mut value) = total.take() {
                 for i in 0..x.len() {
@@ -100,7 +116,6 @@ pub unsafe fn make_syscall(pc: usize, frame_ptr: *mut crate::arch::isa::trap::Tr
                 }
                 total.replace(value);
             }
-            crate::println!("Total value: {:?}", total);
             if(process::TMR_BOOL) {
              syscall_push_tmr();
              } else {
@@ -139,13 +154,10 @@ pub unsafe fn make_syscall(pc: usize, frame_ptr: *mut crate::arch::isa::trap::Tr
                                      x = queue[k];
                                      y = line[k];
                                     if(x == y) {
-                                         crate::println!("x is {} ", x);
-                                         crate::println!("y is {} ", y);
                                         count_queue +=1;
-                                        crate::println!("count_queue is {} ", count_queue);
+                                         crate::println!("x is {}, y is {}, count_queue is {}", x, y, count_queue);
                                     } else {
-                                        crate::println!("x is {} ", x);
-                                        crate::println!("y is {} ", y);
+                                        crate::println!("x is {}, y is {}, count_queue is {}", x, y, count_queue);
                                     }
                                 }
                             }
